@@ -3,7 +3,7 @@ name = Matrix
 module = matrix
 
 [Documentation]
-description =
+description = matrix-client
 
 [Python]
 version = 3
