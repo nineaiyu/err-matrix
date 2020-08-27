@@ -1,10 +1,10 @@
 # err-matrix
 
 ### install
-errbot server in /opt/
+errbot server in /data/errbot/
 ```
-mkdir -p /opt/backend
-cd /opt/backend
+mkdir -p /data/errbot/backend
+cd /data/errbot/backend
 git clone https://github.com/nineaiyu/err-matrix.git
 pip install matrix-client
 ```
@@ -20,6 +20,6 @@ BOT_IDENTITY ={
         'user':'@qoyrlpecwsnfhmdgbtzu:maxjoy.cc'
         }
 
-BOT_EXTRA_BACKEND_DIR=r'/opt/backend'
+BOT_EXTRA_BACKEND_DIR=r'/data/errbot/backend'
 ```
 
