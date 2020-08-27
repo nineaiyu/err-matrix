@@ -6,7 +6,7 @@ from errbot.backends.base import Person, Room, Message
 from errbot.backends.base import Message, Person, Presence, ONLINE, OFFLINE, Room, RoomOccupant
 
 from matrix_client.client import MatrixClient
-from matrix_client.errors import MatrixRequestError
+from matrix_client.errors import MatrixRequestError, MatrixUnexpectedResponse
 
 log = logging.getLogger(__name__)
 
@@ -137,6 +137,43 @@ class MatrixBackend(ErrBot):
     def send_msg(self, room_id, msg):
         room = self._client.join_room(room_id)
         return room.send_text(msg)
+
+    def _upload(self, content, content_type, filename):
+        try:
+            response = self._media_upload(content, content_type, filename)
+            if "content_uri" in response:
+                return response["content_uri"]
+            else:
+                raise MatrixUnexpectedResponse(
+                    "The upload was successful, but content_uri wasn't found."
+                )
+        except MatrixRequestError as e:
+            raise MatrixRequestError(
+                code=e.code,
+                content="Upload failed: %s" % e
+            )
+
+    def _media_upload(self, content, content_type, filename):
+        return self._client.api._send(
+            "POST", "",
+            content=content,
+            headers={"Content-Type": content_type},
+            api_path="/_matrix/media/r0/upload",
+            query_params={'filename': filename}
+        )
+
+    def send_file(self, room_id, file_path, filename):
+        with open(file_path, "rb") as f:
+            content = f.read()
+
+        return self.send_stream_content(room_id, content, filename)
+
+    def send_stream_content(self, room_id, content, filename):
+        res = self._upload(content, 'application/octet-stream', filename)
+
+        room = self._client.join_room(room_id)
+        room.send_file(res, filename)
+        return res
 
     def build_reply(self, msg, text=None, private=False, threaded=False):
         response = self.build_message(text)
