@@ -39,6 +39,11 @@ class MatrixPerson(Person):
     def person(self):
         return self.user_id
 
+    @property
+    def username(self):
+        result = re.findall(re.compile(r"@(.*?):(.*)", re.S), self.user_id)
+        return result[0][0]
+
 
 class MatrixRoom(Room):
     """Representation of a matrix room."""
