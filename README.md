@@ -5,9 +5,18 @@ errbot server in /data/errbot/
 ```
 mkdir -p /data/errbot/backend
 cd /data/errbot/backend
-git clone https://github.com/nineaiyu/err-matrix.git
-pip install matrix-client
+
+git clone --depth 1 -b dev --single-branch https://github.com/nineaiyu/err-matrix.git
 ```
+
+```
+git clone --depth 1 -b master --single-branch https://github.com/matrix-org/matrix-python-sdk.git
+cd matrix-python-sdk
+python setup.py install
+cd ../
+rm -rf  matrix-python-sdk
+```
+
 
 ### setting
 
